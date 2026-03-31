@@ -21,7 +21,7 @@ export default function About() {
 
             <div className="about-bio">
               <p>
-                I'm <strong>Febin Raj</strong>, a passionate Full Stack Developer with 3+ years of experience
+                I'm <strong>Febin Raj</strong>, a passionate Full Stack Developer
                 building scalable web applications from the ground up. I thrive at the intersection
                 of clean engineering and great design.
               </p>
@@ -31,8 +31,7 @@ export default function About() {
                 pixel-perfect React interfaces.
               </p>
               <p>
-                When I'm not coding, you'll find me exploring new tech, contributing to open source,
-                or mentoring aspiring developers.
+                When I'm not coding, you'll find me exploring new tech, contributing to open source.
               </p>
             </div>
 
