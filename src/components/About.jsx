@@ -50,7 +50,7 @@ export default function About() {
               </div>
               <div className="quick-fact">
                 <span className="fact-label">🌐 Languages</span>
-                <span className="fact-value">English, Malayalam,Tamil</span>
+                <span className="fact-value">English, Malayalam, Tamil</span>
               </div>
             </div>
           </div>
