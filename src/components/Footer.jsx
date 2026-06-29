@@ -1,6 +1,5 @@
-import React from 'react';
 import { ArrowUp } from 'lucide-react';
-import { Github, Linkedin, Instagram, Whatsapp } from './SocialIcons';
+import { SOCIAL_LINKS, SITE_CONFIG } from '../config';
 
 import './Footer.css';
 
@@ -39,10 +38,11 @@ export default function Footer() {
             <div className="footer-col">
               <h4>Social</h4>
               <ul>
-                <li><a href="https://github.com/Febinraj0303" target="_blank" rel="noreferrer">GitHub</a></li>
-                <li><a href="https://linkedin.com/in/febin-raj034" target="_blank" rel="noreferrer">LinkedIn</a></li>
-                <li><a href="https://instagram.com/_febinnnn_._" target="_blank" rel="noreferrer">Instagram</a></li>
-                <li><a href="https://wa.me/918220413870" target="_blank" rel="noreferrer">WhatsApp</a></li>
+                {Object.values(SOCIAL_LINKS).map(link => (
+                  <li key={link.label}>
+                    <a href={link.url} target="_blank" rel="noopener noreferrer">{link.label}</a>
+                  </li>
+                ))}
               </ul>
             </div>
           </div>
@@ -51,7 +51,7 @@ export default function Footer() {
 
         <div className="footer-bottom">
           <p className="copyright">
-            &copy; {new Date().getFullYear()} Febin Raj. All rights reserved.
+            &copy; {new Date().getFullYear()} {SITE_CONFIG.name}. All rights reserved.
           </p>
 
           <button className="back-to-top" onClick={scrollToTop} aria-label="Back to top">

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import { useEffect, Suspense, lazy } from 'react';
 import { SpeedInsights } from '@vercel/speed-insights/react';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
@@ -7,9 +7,11 @@ import Skills from './components/Skills';
 import Projects from './components/Projects';
 import Contact from './components/Contact';
 import Footer from './components/Footer';
-import LiquidEther from './components/LiquidEther';
+import ErrorBoundary from './components/ErrorBoundary';
 
 import './App.css';
+
+const LiquidEther = lazy(() => import('./components/LiquidEther'));
 
 function App() {
   useEffect(() => {
@@ -18,8 +20,8 @@ function App() {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
           entry.target.classList.add('visible');
-          // Optional: Stop observing once revealed
-          // observer.unobserve(entry.target); 
+          // Stop observing once revealed to improve performance
+          observer.unobserve(entry.target); 
         }
       });
     }, {
@@ -37,11 +39,15 @@ function App() {
   return (
     <>
       <div className="bg-fluid">
-        <LiquidEther 
-          colors={['#5227FF', '#FF9FFC', '#B19EEF']}
-          autoDemo={true}
-          resolution={0.4}
-        />
+        <ErrorBoundary fallback={null}>
+          <Suspense fallback={null}>
+            <LiquidEther 
+              colors={['#5227FF', '#FF9FFC', '#B19EEF']}
+              autoDemo={true}
+              resolution={0.4}
+            />
+          </Suspense>
+        </ErrorBoundary>
       </div>
       <Navbar />
       <main>
@@ -50,7 +56,6 @@ function App() {
         <Skills />
         <Projects />
         <Contact />
-
       </main>
       <Footer />
       <SpeedInsights />

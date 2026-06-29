@@ -1,14 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Menu, X } from 'lucide-react';
+import { NAV_LINKS } from '../config';
 import './Navbar.css';
-
-const navLinks = [
-  { label: 'About', href: '#about' },
-  { label: 'Skills', href: '#skills' },
-  { label: 'Projects', href: '#projects' },
-  { label: 'Contact', href: '#contact' },
-
-];
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
@@ -20,7 +13,7 @@ export default function Navbar() {
       setScrolled(window.scrollY > 20);
 
       // Highlight active nav section
-      const sections = navLinks.map(l => l.href.replace('#', ''));
+      const sections = NAV_LINKS.map(l => l.href.replace('#', ''));
       for (let i = sections.length - 1; i >= 0; i--) {
         const el = document.getElementById(sections[i]);
         if (el && window.scrollY >= el.offsetTop - 120) {
@@ -32,6 +25,20 @@ export default function Navbar() {
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
+
+  // Close mobile menu when clicking outside
+  const closeMenu = useCallback(() => setMenuOpen(false), []);
+
+  useEffect(() => {
+    if (!menuOpen) return;
+    const handleClickOutside = (e) => {
+      if (!e.target.closest('.navbar-links') && !e.target.closest('.mobile-toggle')) {
+        closeMenu();
+      }
+    };
+    document.addEventListener('click', handleClickOutside);
+    return () => document.removeEventListener('click', handleClickOutside);
+  }, [menuOpen, closeMenu]);
 
   const handleNavClick = (e, href) => {
     e.preventDefault();
@@ -46,11 +53,11 @@ export default function Navbar() {
           <span className="logo-name">Stack</span>
           <span className="logo-role">flow</span>
           <span className="logo-dot">.</span>
-          <span className=''>Co</span>
+          <span className="">Co</span>
         </a>
 
         <ul className={`navbar-links ${menuOpen ? 'open' : ''}`}>
-          {navLinks.map(link => (
+          {NAV_LINKS.map(link => (
             <li key={link.href}>
               <a
                 href={link.href}

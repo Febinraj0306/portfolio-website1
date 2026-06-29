@@ -1,7 +1,8 @@
-import React, { useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { Download, ArrowDown, Mail, Code2 } from 'lucide-react';
 import { Github, Linkedin, Instagram, Whatsapp } from './SocialIcons';
-
+import { SOCIAL_LINKS, SITE_CONFIG } from '../config';
+import heroPng from '../assets/hero.png';
 import './Hero.css';
 
 const roles = ['Full Stack Developer', 'React Specialist', 'Node.js Engineer', 'UI/UX Enthusiast'];
@@ -113,7 +114,7 @@ export default function Hero() {
           <div className="hero-socials">
             <a
               id="hero-social-github"
-              href="https://github.com/Febinraj0306"
+              href={SOCIAL_LINKS.github.url}
               target="_blank"
               rel="noopener noreferrer"
               className="social-btn"
@@ -123,7 +124,7 @@ export default function Hero() {
             </a>
             <a
               id="hero-social-linkedin"
-              href="https://linkedin.com/in/febin-raj03"
+              href={SOCIAL_LINKS.linkedin.url}
               target="_blank"
               rel="noopener noreferrer"
               className="social-btn"
@@ -133,7 +134,7 @@ export default function Hero() {
             </a>
             <a
               id="hero-social-instagram"
-              href="https://instagram.com/_febinnnn_._"
+              href={SOCIAL_LINKS.instagram.url}
               target="_blank"
               rel="noopener noreferrer"
               className="social-btn"
@@ -143,7 +144,7 @@ export default function Hero() {
             </a>
             <a
               id="hero-social-whatsapp"
-              href="https://wa.me/918220413870"
+              href={SOCIAL_LINKS.whatsapp.url}
               target="_blank"
               rel="noopener noreferrer"
               className="social-btn"
@@ -153,7 +154,7 @@ export default function Hero() {
             </a>
             <a
               id="hero-social-email"
-              href="mailto:febinraj321@gmail.com"
+              href={`mailto:${SITE_CONFIG.email}`}
               className="social-btn"
               aria-label="Email"
             >
@@ -167,7 +168,7 @@ export default function Hero() {
             <div className="avatar-ring" />
             <div className="avatar-ring avatar-ring-2" />
             <div className="hero-avatar">
-              <div className="avatar-initials">FR</div>
+              <div className="avatar-initials">{SITE_CONFIG.initials}</div>
               <div className="avatar-glow" />
             </div>
             {/* Floating tech badges */}

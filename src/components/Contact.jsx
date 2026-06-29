@@ -1,14 +1,43 @@
-import React, { useState } from 'react';
-import { Mail, MessageSquare, Send, CheckCircle2 } from 'lucide-react';
+import { useState } from 'react';
+import { Mail, MessageSquare, Send, CheckCircle2, AlertCircle } from 'lucide-react';
 import emailjs from '@emailjs/browser';
+import { SOCIAL_LINKS, SITE_CONFIG } from '../config';
 import './Contact.css';
 
 export default function Contact() {
   const [formData, setFormData] = useState({ name: '', email: '', message: '' });
   const [status, setStatus] = useState('idle');
+  const [errors, setErrors] = useState({});
+  const [feedback, setFeedback] = useState(null);
+
+  const validate = () => {
+    const newErrors = {};
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!formData.name.trim()) {
+      newErrors.name = 'Name is required';
+    }
+    if (!formData.email.trim()) {
+      newErrors.email = 'Email is required';
+    } else if (!emailRegex.test(formData.email)) {
+      newErrors.email = 'Please enter a valid email address';
+    }
+    if (!formData.message.trim()) {
+      newErrors.message = 'Message is required';
+    } else if (formData.message.trim().length < 10) {
+      newErrors.message = 'Message must be at least 10 characters';
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    setFeedback(null);
+
+    if (!validate()) return;
+
     setStatus('sending');
 
     const serviceId = import.meta.env.VITE_EMAILJS_SERVICE_ID || 'YOUR_SERVICE_ID';
@@ -25,13 +54,20 @@ export default function Contact() {
       .then((response) => {
         console.log('SUCCESS!', response.status, response.text);
         setStatus('success');
+        setFeedback({ type: 'success', text: 'Thank you! Your message has been sent successfully.' });
         setFormData({ name: '', email: '', message: '' });
-        setTimeout(() => setStatus('idle'), 3000);
+        setTimeout(() => {
+          setStatus('idle');
+          setFeedback(null);
+        }, 5000);
       })
       .catch((err) => {
         console.error('FAILED...', err);
         setStatus('idle');
-        alert('Failed to send message. Please make sure you have added your EmailJS credentials.');
+        setFeedback({ 
+          type: 'error', 
+          text: 'Failed to send message. Please verify your internet connection or email configuration.' 
+        });
       });
   };
 
@@ -55,7 +91,7 @@ export default function Contact() {
                 </div>
                 <div className="method-details">
                   <h4>Email Me</h4>
-                  <a href="mailto:febinraj321@gmail.com">febinraj321@gmail.com</a>
+                  <a href={`mailto:${SITE_CONFIG.email}`}>{SITE_CONFIG.email}</a>
                 </div>
               </div>
 
@@ -66,15 +102,14 @@ export default function Contact() {
                 <div className="method-details">
                   <h4>Social Profiles</h4>
                   <div className="social-links-small">
-                    <a href="https://github.com/Febinraj0306" target="_blank" rel="noreferrer">GitHub</a>
+                    <a href={SOCIAL_LINKS.github.url} target="_blank" rel="noopener noreferrer">GitHub</a>
                     <span>•</span>
-                    <a href="https://linkedin.com/in/febin-raj03" target="_blank" rel="noreferrer">LinkedIn</a>
+                    <a href={SOCIAL_LINKS.linkedin.url} target="_blank" rel="noopener noreferrer">LinkedIn</a>
                     <span>•</span>
-                    <a href="https://instagram.com/_febinnnn_._" target="_blank" rel="noreferrer">Instagram</a>
+                    <a href={SOCIAL_LINKS.instagram.url} target="_blank" rel="noopener noreferrer">Instagram</a>
                     <span>•</span>
-                    <a href="https://wa.me/918220413870" target="_blank" rel="noreferrer">WhatsApp</a>
+                    <a href={SOCIAL_LINKS.whatsapp.url} target="_blank" rel="noopener noreferrer">WhatsApp</a>
                   </div>
-
                 </div>
               </div>
             </div>
@@ -84,7 +119,7 @@ export default function Contact() {
           <div className="contact-form-wrapper glass-card reveal">
             <h3 className="form-title">Send a Message</h3>
 
-            <form className="contact-form" onSubmit={handleSubmit}>
+            <form className="contact-form" onSubmit={handleSubmit} noValidate>
               <div className="form-group">
                 <label htmlFor="name">Your Name</label>
                 <input
@@ -93,8 +128,13 @@ export default function Contact() {
                   required
                   placeholder="John Doe"
                   value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  onChange={(e) => {
+                    setFormData({ ...formData, name: e.target.value });
+                    if (errors.name) setErrors({ ...errors, name: null });
+                  }}
+                  style={errors.name ? { borderColor: '#ef4444' } : {}}
                 />
+                {errors.name && <span className="form-error-text">{errors.name}</span>}
               </div>
 
               <div className="form-group">
@@ -105,8 +145,13 @@ export default function Contact() {
                   required
                   placeholder="john@example.com"
                   value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  onChange={(e) => {
+                    setFormData({ ...formData, email: e.target.value });
+                    if (errors.email) setErrors({ ...errors, email: null });
+                  }}
+                  style={errors.email ? { borderColor: '#ef4444' } : {}}
                 />
+                {errors.email && <span className="form-error-text">{errors.email}</span>}
               </div>
 
               <div className="form-group">
@@ -117,8 +162,13 @@ export default function Contact() {
                   rows="5"
                   placeholder="How can I help you?"
                   value={formData.message}
-                  onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                  onChange={(e) => {
+                    setFormData({ ...formData, message: e.target.value });
+                    if (errors.message) setErrors({ ...errors, message: null });
+                  }}
+                  style={errors.message ? { borderColor: '#ef4444' } : {}}
                 />
+                {errors.message && <span className="form-error-text">{errors.message}</span>}
               </div>
 
               <button
@@ -130,6 +180,17 @@ export default function Contact() {
                 {status === 'sending' && <span className="loader">Sending...</span>}
                 {status === 'success' && <><CheckCircle2 size={18} /> Message Sent!</>}
               </button>
+
+              {feedback && (
+                <div className={`form-feedback ${feedback.type}`}>
+                  {feedback.type === 'success' ? (
+                    <CheckCircle2 size={18} />
+                  ) : (
+                    <AlertCircle size={18} />
+                  )}
+                  <span>{feedback.text}</span>
+                </div>
+              )}
             </form>
           </div>
         </div>
@@ -137,3 +198,4 @@ export default function Contact() {
     </section>
   );
 }
+
